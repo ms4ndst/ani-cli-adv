@@ -52,7 +52,17 @@ If after this the issue persists then open an issue.
 
 ## Install
 
+### Installing from source
 
+*This method works for any unix-like operating system and is a baseline for porting efforts.*
+
+Install dependencies [(See below)](#dependencies)
+
+```sh
+git clone "https://github.com/pystardust/ani-cli.git"
+sudo cp ani-cli/ani-cli /usr/local/bin
+rm -rf ani-cli
+```
 
 ##### Running the smoke tests on Windows
 - From Git Bash:
@@ -73,7 +83,7 @@ This should be fixed if the ani-cli scoop manifest gets updated in [this PR](htt
 - curl can cause issues. ani-cli has been tested unsuccessfully with curl `7.83.1` and successfully with `7.86.0`. If you run into issues, try installing a newer one with scoop.
 - If you installed mpv with scoop, your mpv configuration will get read from `C:\Users\USERNAME\scoop\apps\mpv\current\portable_config`. See [the mpv documentation](https://mpv.io/manual/stable/) regarding `portable_config` for more details.
 
-</details><details><summary><b>WSL</b></summary>
+<details><summary><b>WSL</b></summary>
 
 Follow the installation instructions of your Linux distribution.
 
@@ -232,18 +242,6 @@ sudo pkg install git
 ```
 
 install from source:
-
-```sh
-git clone "https://github.com/pystardust/ani-cli.git"
-sudo cp ani-cli/ani-cli /usr/local/bin
-rm -rf ani-cli
-```
-
-### Installing from source
-
-*This method works for any unix-like operating system and is a baseline for porting efforts.*
-
-Install dependencies [(See below)](#dependencies)
 
 ```sh
 git clone "https://github.com/pystardust/ani-cli.git"
