@@ -52,9 +52,9 @@ If after this the issue persists then open an issue.
 Install dependencies [(See below)](#dependencies)
 
 ```sh
-git clone "https://github.com/pystardust/ani-cli.git"
-sudo cp ani-cli/ani-cli /usr/local/bin
-rm -rf ani-cli
+git clone "https://github.com/pystardust/ani-cli.git" ani-cli-adv
+sudo cp ani-cli-adv/ani-cli /usr/local/bin
+rm -rf ani-cli-adv
 ```
 
 ##### Running the smoke tests on Windows
