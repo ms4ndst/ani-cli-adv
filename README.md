@@ -1,12 +1,12 @@
 <p align=center>
 <br>
 <a href="http://makeapullrequest.com"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
-<a href="#Linux"><img src="https://img.shields.io/badge/os-linux-brightgreen">
-<a href="#MacOS"><img src="https://img.shields.io/badge/os-mac-brightgreen">
-<a href="#Android"><img src="https://img.shields.io/badge/os-android-brightgreen">
-<a href="#Windows"><img src="https://img.shields.io/badge/os-windows-yellowgreen">
-<a href="#iOS"><img src="https://img.shields.io/badge/os-ios-yellow">
-<a href="#Steam-deck"><img src="https://img.shields.io/badge/os-steamdeck-yellow">
+<img src="https://img.shields.io/badge/os-linux-brightgreen">
+<img src="https://img.shields.io/badge/os-mac-brightgreen">
+<img src="https://img.shields.io/badge/os-android-brightgreen">
+<img src="https://img.shields.io/badge/os-windows-yellowgreen">
+<img src="https://img.shields.io/badge/os-ios-yellow">
+<img src="https://img.shields.io/badge/os-steamdeck-yellow">
 <br>
 <h1 align="center">
 <a href="https://discord.gg/aqu7GpqVmR"><img src="https://invidget.switchblade.xyz/aqu7GpqVmR"></a>
@@ -271,7 +271,7 @@ After installation, open a Git Bash tab in Windows Terminal and run:
 ```sh
 ani-cli -h
 ```
-</details>
+
 ## Uninstall
 
 - Source install (Linux/macOS/BSD):
