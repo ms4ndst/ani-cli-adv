@@ -53,8 +53,6 @@ If after this the issue persists then open an issue.
 ## Install
 
 
-*These Platforms have rock solid support and are used by maintainers and large parts of the userbase.*
-
 <details><summary><b>Linux</b></summary>
 
 #### Native Packages
