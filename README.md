@@ -248,8 +248,10 @@ git clone "https://github.com/pystardust/ani-cli.git"
 sudo cp ani-cli/ani-cli /usr/local/bin
 rm -rf ani-cli
 ```
+
 </details>
-<details><summary><b>Windows install (Scoop, optional)</b></summary>
+
+### Windows install (Scoop, optional)
 
 `ani-cli` is also available on Windows via [Scoop](https://scoop.sh/). This is an optional convenience on top of the source install.
 
