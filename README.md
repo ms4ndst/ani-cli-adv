@@ -53,167 +53,6 @@ If after this the issue persists then open an issue.
 ## Install
 
 
-<details><summary><b>Linux</b></summary>
-
-#### Native Packages
-
-*Native packages have a more robust update cycle, but sometimes they are slow to upgrade. \
-If the one for your platform is up-to-date we suggest going with it.*
-
-<details><summary>Debian 13/unstable</summary>
-
-```sh
-sudo apt install ani-cli
-```
-</details>
-
-<details><summary>Fedora</summary>
-
-To install mpv (and vlc) you need _RPM Fusion free_ enabled. Simply follow the instructions here: https://rpmfusion.org/Configuration
-To be able to install syncplay, you'll need to enable this copr repo (instructions included): https://copr.fedorainfracloud.org/coprs/batmanfeynman/syncplay/.
-
-To install ani-cli:
-```sh
-sudo dnf copr enable derisis13/ani-cli
-sudo dnf install ani-cli
-```
-*If for your distro uses rpm and you would like to see a native package, open an issue.*
-
-</details><details><summary>Arch</summary>
-
-Build and install from the AUR:
-```sh
-yay -S ani-cli
-```
-Also consider `ani-cli-git`
-
-</details><details><summary>Gentoo</summary>
-
-Build and install from the GURU:
-```sh
-sudo eselect repository enable guru
-sudo emaint sync -r guru
-sudo emerge -a ani-cli
-```
-Consider using the 9999 ebuild.
-```sh
-sudo emerge -a =app-misc/ani-cli-9999
-```
-
-</details><details><summary>OpenSuse</summary>
-
-On Suse the provided MPV and VLC packages are missing features that are used by ani-cli. The only required is the "Only Essentials" repository which has versions for each Suse release.
-You can find instructions on this [here](https://en.opensuse.org/Additional_package_repositories#Packman).
-
-To add the ani-cli copr repo, update then install ani-cli run (on both versions):
-```sh
-zypper addrepo https://download.copr.fedorainfracloud.org/results/derisis13/ani-cli/opensuse-tumbleweed-x86_64/ ani-cli
-zypper dup
-zypper install ani-cli
-```
-You'll get a warning about `Signature verification failed [4-Signatures public key is not available]` but this can be ignored from the prompt.
-
-*Note: package is noarch, so any architecture should work, even though the repo is labelled x86-64*
-
-</details></details><details><summary><b>MacOS</b></summary>
-
-Install dependencies [(See below)](#dependencies)
-
-Install [HomeBrew](https://docs.brew.sh/Installation) if not installed.
-
-```sh
-git clone "https://github.com/pystardust/ani-cli.git" && cd ./ani-cli
-cp ./ani-cli "$(brew --prefix)"/bin
-cd .. && rm -rf ./ani-cli
-```
-
-*To install (with Homebrew) the dependencies required on Mac OS, you can run:*
-
-```sh
-brew install curl grep aria2 ffmpeg git fzf yt-dlp && \
-brew install --cask iina
-```
-*Why iina and not mpv? Drop-in replacement for mpv for MacOS. Integrates well with OSX UI. Excellent support for M1. Open Source.*
-
-</details><details><summary><b>Android</b></summary>
-
-Install termux [(Guide)](https://termux.com/)
-
-#### Termux package
-
-```sh
-pkg up -y
-pkg install ani-cli
-```
-If you're using Android 14 make sure to run this due to [#1206](https://github.com/pystardust/ani-cli/issues/1206):
-```sh
-pkg install termux-am
-```
-
-For players you can use the apk (playstore/fdroid) versions of mpv and vlc. Note that these cannot be checked from termux so a warning is generated when checking dependencies.
-
-</details>
-
-
-`ani-cli` is on scoop. Please read further for setup instructions.
-
-We will set up the bash.exe that comes with Git for Windows to be used with Windows Terminal. You may use terminals such as Wezterm or Alacritty, but this guide only covers Windows Terminal. The Git Bash terminal (i.e., mintty) [has problems with fzf](#windows-known-problems-and-solutions).
-
-First, you'll need to install the scoop package manager. [(Install)](https://scoop.sh/) Follow **quickstart**.
-
-Next, get Windows Terminal. It comes preinstalled on Windows 11. If you do not have it, install it by running the following commands in powershell.
-
-```sh
-scoop bucket add extras
-scoop install extras/windows-terminal
-```
-
-Next, get git. If you have it, please update it. If you do not already have it, install it by running `scoop install git` in powershell.
-
-Ensure that Git Bash is present in the Windows Terminal tab drop down, as shown below.
-
-![windows-terminal-git-bash-1.png](.assets/windows-terminal-git-bash-1.png)
-
-If it is not there, please add it. To add it, first click the drop-down button beside the new tab button (shown above).
-
-Then, navigate to `Settings > Profiles > Add a new profile`. Click `+ New empty profile`.
-
-![windows-terminal-git-bash-2.png](.assets/windows-terminal-git-bash-2.png)
-
-Next:
-- If you installed git with scoop: Set *Name* as "Git Bash", set *Command line* as `%GIT_INSTALL_ROOT%\bin\bash.exe -i -l`, and set *Icon* as `%GIT_INSTALL_ROOT%\mingw64\share\git\git-for-windows.ico`.
-- If you installed git by other means: Set *Name* as "Git Bash", set *Command line* as `C:\Program Files\Git\bin\bash.exe -i -l`, and set *Icon* as `C:\Program Files\Git\mingw64\share\git\git-for-windows.ico`.
-
-Next, set *Starting Directory* to `%USERPROFILE%`, and ensure that *Hide profile from dropdown* is set to "Off" (otherwise you won't be able to see this profile in the drop down).
-
-![windows-terminal-git-bash-3.png](.assets/windows-terminal-git-bash-3.png)
-
-Now save your changes.
-
-You will use this profile to run `ani-cli` in this bash shell.
-Under Startup in Windows Terminal Settings, you may set this profile as the default so that you do not have to switch to it every time you want to run `ani-cli`.
-
-![windows-terminal-git-bash-4.png](.assets/windows-terminal-git-bash-4.png)
-
-Now restart Windows Terminal. In the Git Bash profile, install `ani-cli` by running the following commands.
-
-```sh
-scoop bucket add extras
-scoop install ani-cli
-```
-
-Next, install its dependencies.
-
-```sh
-scoop bucket add extras
-scoop install fzf ffmpeg mpv
-```
-
-Consider also installing `yt-dlp` and `aria2` for downloading to work.
-
-Restart Windows Terminal. Go to the Git Bash profile and update `ani-cli` with `ani-cli -U`. You will use this keep ani-cli up-to-date.
-
-Now you can use ani-cli. Read the output of `ani-cli -h` for more help.
 
 ##### Running the smoke tests on Windows
 - From Git Bash:
@@ -410,6 +249,27 @@ Install dependencies [(See below)](#dependencies)
 git clone "https://github.com/pystardust/ani-cli.git"
 sudo cp ani-cli/ani-cli /usr/local/bin
 rm -rf ani-cli
+```
+
+### Windows install (Scoop, optional)
+
+`ani-cli` is also available on Windows via [Scoop](https://scoop.sh/). This is an optional convenience on top of the source install.
+
+We recommend using Windows Terminal with a Git Bash profile. In PowerShell:
+
+```sh
+scoop bucket add extras
+scoop install extras/windows-terminal
+scoop install git
+scoop install ani-cli fzf ffmpeg mpv
+```
+
+Consider also installing `yt-dlp` and `aria2` for downloading to work.
+
+After installation, open a Git Bash tab in Windows Terminal and run:
+
+```sh
+ani-cli -h
 ```
 
 ## Uninstall
