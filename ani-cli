@@ -84,6 +84,18 @@ help_info() {
         Display a countdown to the next episode
       -U, --update
         Update the script
+
+    Startup behavior:
+      - If launched interactively with no query, a menu offers: Resume, Favorites, Search.
+      - Disable this menu by setting ANI_CLI_STARTUP_MENU=0.
+
+    Favorites:
+      - While watching, open the menu and choose 'favorite'/'unfavorite' to toggle the current series.
+      - Favorites are stored in $ANI_CLI_HIST_DIR/favorites (default: ~/.local/state/ani-cli/favorites).
+
+    Last watched:
+      - The most recent series/episode is recorded in $ANI_CLI_HIST_DIR/last and shown as Resume at startup.
+
     Some example usages:
       %s -q 720p banana fish
       %s --skip --skip-title \"one piece\" -S 2 one piece
@@ -271,14 +283,90 @@ process_hist_entry() {
     [ -n "$ep_no" ] && printf "%s\t%s - episode %s\n" "$id" "$title" "$ep_no"
 }
 
+# Favorites utilities
+add_favorite_current() {
+    # Ensure favorites file exists
+    [ ! -f "$favorites_file" ] && : >"$favorites_file"
+    # Add only if not present
+    if ! grep -q "^${id}\t" "$favorites_file" 2>/dev/null; then
+        printf "%s\t%s\n" "$id" "$title" >>"$favorites_file"
+        printf "\033[1;32mAdded to favorites:\033[0m %s\n" "$title" 1>&2
+    else
+        printf "\033[1;33mAlready in favorites:\033[0m %s\n" "$title" 1>&2
+    fi
+}
+
+remove_favorite_current() {
+    [ -f "$favorites_file" ] || return 0
+    if grep -q "^${id}\t" "$favorites_file" 2>/dev/null; then
+        sed "/^${id}\t/d" "$favorites_file" >"${favorites_file}.new" && mv "${favorites_file}.new" "$favorites_file"
+        printf "\033[1;32mRemoved from favorites:\033[0m %s\n" "$title" 1>&2
+    else
+        printf "\033[1;33mNot in favorites:\033[0m %s\n" "$title" 1>&2
+    fi
+}
+
+list_favorites() {
+    [ -f "$favorites_file" ] && [ -s "$favorites_file" ] && cat "$favorites_file"
+}
+
+# Startup selector (Resume, Favorites, Search)
+startup_select() {
+    # Only interactive sessions without predefined query should see this
+    [ "$startup_menu" = "1" ] || return 1
+    [ -t 0 ] || return 1
+
+    options=""
+    if [ -f "$last_state_file" ] && [ -s "$last_state_file" ]; then
+        last_id=$(cut -f1 "$last_state_file")
+        last_title=$(cut -f2 "$last_state_file")
+        last_ep=$(cut -f3 "$last_state_file")
+        options=$(printf "%s\nresume: %s - episode %s" "$options" "$last_title" "$last_ep")
+    fi
+
+    favs=$(list_favorites)
+    [ -n "$favs" ] && options=$(printf "%s\nFavorites" "$options")
+    options=$(printf "%s\nSearch" "$options")
+
+    sel=$(printf "%s\n" "$options" | launcher "" "Start: ")
+    [ -z "$sel" ] && return 1
+
+    case "$sel" in
+        resume:*)
+            id="$last_id"
+            title="$last_title"
+            ep_list=$(episodes_list "$id")
+            ep_no="$last_ep"
+            allanime_title="$(printf "%s" "$title" | cut -d'(' -f1 | tr -d '[:punct:]')"
+            preselected=1
+            ;;
+        Favorites)
+            fav_sel=$(list_favorites | nl -w 2 | sed 's/^[[:space:]]//' | nth "Select favorite: ")
+            [ -z "$fav_sel" ] && return 1
+            id=$(printf "%s" "$fav_sel" | cut -f1)
+            title=$(printf "%s" "$fav_sel" | cut -f2)
+            ep_list=$(episodes_list "$id")
+            ep_no=$(printf "%s" "$ep_list" | nth "Select episode: " "$multi_selection_flag")
+            [ -z "$ep_no" ] && return 1
+            allanime_title="$(printf "%s" "$title" | cut -d'(' -f1 | tr -d '[:punct:]')"
+            preselected=1
+            ;;
+        *) # Search
+            :
+            ;;
+    esac
+}
+
 update_history() {
     if grep -q -- "$id" "$histfile"; then
-        sed -E "s|^[^	]+	${id}	[^	]+$|${ep_no}	${id}	${title}|" "$histfile" >"${histfile}.new"
+        sed -E "s|^[^\t]+\t${id}\t[^\t]+$|${ep_no}\t${id}\t${title}|" "$histfile" >"${histfile}.new"
     else
         cp "$histfile" "${histfile}.new"
         printf "%s\t%s\t%s\n" "$ep_no" "$id" "$title" >>"${histfile}.new"
     fi
     mv "${histfile}.new" "$histfile"
+    # Persist last watched suggestion
+    printf "%s\t%s\t%s\n" "$id" "$title" "$ep_no" >"$last_state_file"
 }
 
 download() {
@@ -406,6 +494,10 @@ hist_dir="${ANI_CLI_HIST_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/ani-cli}"
 [ ! -d "$hist_dir" ] && mkdir -p "$hist_dir"
 histfile="$hist_dir/ani-hsts"
 [ ! -f "$histfile" ] && : >"$histfile"
+favorites_file="$hist_dir/favorites"
+[ ! -f "$favorites_file" ] && : >"$favorites_file"
+last_state_file="$hist_dir/last"
+startup_menu="${ANI_CLI_STARTUP_MENU:-1}"
 search="${ANI_CLI_DEFAULT_SOURCE:-scrape}"
 
 while [ $# -gt 0 ]; do
@@ -509,29 +601,34 @@ case "$search" in
         allanime_title="$(printf "%s" "$title" | cut -d'(' -f1 | tr -d '[:punct:]')"
         ;;
     *)
-        if [ "$use_external_menu" = "0" ]; then
-            while [ -z "$query" ]; do
-                printf "\33[2K\r\033[1;36mSearch anime: \033[0m" && read -r query
-            done
-        else
-            [ -z "$query" ] && query=$(printf "" | external_menu "" "Search anime: " "$external_menu_args")
-            [ -z "$query" ] && exit 1
-        fi
-        # for checking new releases by specifying anime name
-        [ "$search" = "nextep" ] && time_until_next_ep "$query"
+        preselected=0
+        # Offer startup menu (Resume, Favorites, Search) if interactive and no query provided
+        [ -z "$query" ] && startup_select || true
+        if [ "$preselected" -ne 1 ]; then
+            if [ "$use_external_menu" = "0" ]; then
+                while [ -z "$query" ]; do
+                    printf "\33[2K\r\033[1;36mSearch anime: \033[0m" && read -r query
+                done
+            else
+                [ -z "$query" ] && query=$(printf "" | external_menu "" "Search anime: " "$external_menu_args")
+                [ -z "$query" ] && exit 1
+            fi
+            # for checking new releases by specifying anime name
+            [ "$search" = "nextep" ] && time_until_next_ep "$query"
 
-        query=$(printf "%s" "$query" | sed "s| |+|g")
-        anime_list=$(search_anime "$query")
-        [ -z "$anime_list" ] && die "No results found!"
-        [ "$index" -eq "$index" ] 2>/dev/null && result=$(printf "%s" "$anime_list" | sed -n "${index}p")
-        [ -z "$index" ] && result=$(printf "%s" "$anime_list" | nl -w 2 | sed 's/^[[:space:]]//' | nth "Select anime: ")
-        [ -z "$result" ] && exit 1
-        title=$(printf "%s" "$result" | cut -f2)
-        allanime_title="$(printf "%s" "$title" | cut -d'(' -f1 | tr -d '[:punct:]')"
-        id=$(printf "%s" "$result" | cut -f1)
-        ep_list=$(episodes_list "$id")
-        [ -z "$ep_no" ] && ep_no=$(printf "%s" "$ep_list" | nth "Select episode: " "$multi_selection_flag")
-        [ -z "$ep_no" ] && exit 1
+            query=$(printf "%s" "$query" | sed "s| |+|g")
+            anime_list=$(search_anime "$query")
+            [ -z "$anime_list" ] && die "No results found!"
+            [ "$index" -eq "$index" ] 2>/dev/null && result=$(printf "%s" "$anime_list" | sed -n "${index}p")
+            [ -z "$index" ] && result=$(printf "%s" "$anime_list" | nl -w 2 | sed 's/^[[:space:]]//' | nth "Select anime: ")
+            [ -z "$result" ] && exit 1
+            title=$(printf "%s" "$result" | cut -f2)
+            allanime_title="$(printf "%s" "$title" | cut -d'(' -f1 | tr -d '[:punct:]')"
+            id=$(printf "%s" "$result" | cut -f1)
+            ep_list=$(episodes_list "$id")
+            [ -z "$ep_no" ] && ep_no=$(printf "%s" "$ep_list" | nth "Select episode: " "$multi_selection_flag")
+            [ -z "$ep_no" ] && exit 1
+        fi
         ;;
 esac
 [ "$skip_intro" = 1 ] && mal_id="$(ani-skip -q "${skip_title:-${title}}")"
@@ -545,7 +642,7 @@ tput sc
 play
 [ "$player_function" = "download" ] || [ "$player_function" = "debug" ] && exit 0
 
-while cmd=$(printf "next\nreplay\nprevious\nselect\nchange_quality\nquit" | nth "Playing episode $ep_no of $title... "); do
+while cmd=$(printf "next\nreplay\nprevious\nselect\nchange_quality\nfavorite\nunfavorite\nquit" | nth "Playing episode $ep_no of $title... "); do
     case "$cmd" in
         next) ep_no=$(printf "%s" "$ep_list" | sed -n "/^${ep_no}$/{n;p;}") 2>/dev/null ;;
         replay) episode="$replay" ;;
@@ -554,6 +651,12 @@ while cmd=$(printf "next\nreplay\nprevious\nselect\nchange_quality\nquit" | nth 
         change_quality)
             new_quality="$(printf "%s" "$links" | launcher | cut -d\> -f1)"
             select_quality "$new_quality"
+            ;;
+        favorite)
+            add_favorite_current
+            ;;
+        unfavorite)
+            remove_favorite_current
             ;;
         *) exit 0 ;;
     esac

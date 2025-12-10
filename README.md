@@ -228,6 +228,33 @@ Restart Windows Terminal. Go to the Git Bash profile and update `ani-cli` with `
 
 Now you can use ani-cli. Read the output of `ani-cli -h` for more help.
 
+##### PowerShell quick start (wrapper)
+If you prefer PowerShell, this repo includes a wrapper that invokes the shell script via Git Bash:
+
+```sh path=null start=null
+# from the repo root
+.\ani-cli.ps1
+.\ani-cli.ps1 --dub "one piece" -q 1080p
+```
+- The wrapper auto-detects `bash.exe` (Git for Windows). If it cannot find it, install Git for Windows or set `$Env:GIT_INSTALL_ROOT`.
+- Environment toggles in PowerShell:
+```sh path=null start=null
+$Env:ANI_CLI_STARTUP_MENU = 0    # disable startup menu
+$Env:ANI_CLI_PLAYER = 'vlc'      # choose VLC instead of mpv
+```
+
+##### Running the smoke tests on Windows
+- From PowerShell:
+```sh path=null start=null
+.\tests\run-tests.ps1          # runs all tests matching smoke-*.sh
+.\tests\run-tests.ps1 -Filter smoke-favorites.sh
+```
+- From Git Bash:
+```sh path=null start=null
+sh tests/smoke-favorites.sh
+sh tests/smoke-lastwatched.sh
+```
+
 #### Windows: Known Problems and Solutions
 
 If you have a problem, please update ani-cli to the latest version with `ani-cli -U`. If you still have a problem, please read further.
@@ -521,6 +548,16 @@ Ani-skip uses the external lua script function of mpv and as such â€“ for now â€
 **Warning:** For now, ani-skip does **not** seem to work under Windows.
 
 **Note:** It may be, that ani-skip won't know the anime you're trying to watch. Try using the `--skip-title <title>` command line argument. (It uses the [aniskip API](https://github.com/lexesjan/typescript-aniskip-extension/tree/main/src/api/aniskip-http-client) and you can contribute missing anime or ask for including it in the database on their [discord server](https://discord.com/invite/UqT55CbrbE)).
+
+## Favorites and Resume
+
+- Favorites
+  - While watching, open the in-player menu and select "favorite" or "unfavorite" to toggle the current series.
+  - Stored at `$ANI_CLI_HIST_DIR/favorites` (default: `~/.local/state/ani-cli/favorites`). One entry per line: `<id>\t<title>`.
+- Last watched / Resume
+  - The most recently watched series and episode are written to `$ANI_CLI_HIST_DIR/last` as `<id>\t<title>\t<episode>`.
+  - On interactive startup with no query, ani-cli shows a startup menu with `Resume`, `Favorites`, and `Search`.
+  - To disable this startup menu, set `ANI_CLI_STARTUP_MENU=0`.
 
 ## FAQ
 <details>
