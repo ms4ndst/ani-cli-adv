@@ -248,8 +248,8 @@ git clone "https://github.com/pystardust/ani-cli.git"
 sudo cp ani-cli/ani-cli /usr/local/bin
 rm -rf ani-cli
 ```
-
-#### Windows install (Scoop, optional)
+</details>
+<details><summary><b>Windows install (Scoop, optional)</b></summary>
 
 `ani-cli` is also available on Windows via [Scoop](https://scoop.sh/). This is an optional convenience on top of the source install.
 
@@ -269,7 +269,7 @@ After installation, open a Git Bash tab in Windows Terminal and run:
 ```sh
 ani-cli -h
 ```
-
+</details>
 ## Uninstall
 
 - Source install (Linux/macOS/BSD):
