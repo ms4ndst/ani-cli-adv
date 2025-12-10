@@ -27,20 +27,21 @@ A cli to browse and watch anime (alone AND with friends). This tool scrapes the 
 
 ## Version
 
-Current version: `4.10.5-adv1` (based on upstream `ani-cli` 4.10.4).
+Current version: `4.10.5-adv2` (based on upstream `ani-cli` 4.10.4).
 
 ### Added / changed in this fork
 
 - Favorites: mark a series as favorite from the in-player menu (`favorite` / `unfavorite`) and store them under `~/.local/state/ani-cli/favorites`.
 - Last watched / Resume: remember the last watched series and episode and offer a `Resume` option on interactive startup.
 - Startup menu: when launched interactively with no query, show a menu with `Resume`, `Favorites`, and `Search`.
+- CLI name: install and use this fork as `ani-cli-adv` (binary and manpage), keeping links and credits pointing to the upstream `ani-cli` project.
 - Windows usage: simplified docs and guidance for running via Git Bash and (optionally) installing via Scoop.
-- README cleanup: removed most distro-specific packaging details and focused on source install and this fork's behavior.
+- README cleanup: removed most distro-specific packaging details, normalized install snippets across platforms, and documented the new features of this fork.
 
 ## Fixing errors
 
 If you encounter `No results found` (and are sure the prompt was correct) or any breaking issue, then make sure you are on **latest version** by typing
-`sudo ani-cli -U` to update on Linux, Mac and Android. On Windows, run `ani-cli -U`.
+`sudo ani-cli-adv -U` to update on Linux, Mac and Android. On Windows, run `ani-cli-adv -U`.
 If after this the issue persists then open an issue.
 
 ## Install
@@ -94,10 +95,10 @@ then run this:
 ```sh
 apk add grep sed curl fzf git aria2 ncurses patch
 apk add ffmpeg
-git clone --depth 1 https://github.com/pystardust/ani-cli ~/.ani-cli
-cp ~/.ani-cli/ani-cli /usr/local/bin/ani-cli
-chmod +x /usr/local/bin/ani-cli
-rm -rf ~/.ani-cli
+git clone --depth 1 https://github.com/pystardust/ani-cli ~/.ani-cli-adv
+cp ~/.ani-cli-adv/ani-cli-adv /usr/local/bin/ani-cli-adv
+chmod +x /usr/local/bin/ani-cli-adv
+rm -rf ~/.ani-cli-adv
 ```
 note that downloading is going to be very slow. This is an iSH issue, not an ani-cli issue.
 </details>
@@ -130,8 +131,8 @@ curl -o ~/.patch/patch.tar.zst https://mirror.sunred.org/archlinux/core/os/x86_6
 tar xvf ~/.patch/patch.tar.zst -C ~/.patch/
 cp ~/.patch/usr/bin/patch ~/.local/bin/
 
-git clone https://github.com/pystardust/ani-cli.git ~/.ani-cli
-cp ~/.ani-cli/ani-cli ~/.local/bin/
+git clone https://github.com/pystardust/ani-cli.git ~/.ani-cli-adv
+cp ~/.ani-cli-adv/ani-cli-adv ~/.local/bin/ani-cli-adv
 
 flatpak install io.mpv.Mpv
 ```
@@ -189,8 +190,8 @@ cp ~/.patch/usr/bin/patch ~/.local/bin/
 ##### Install ani-cli:
 
 ```sh
-git clone https://github.com/pystardust/ani-cli.git ~/.ani-cli
-cp ~/.ani-cli/ani-cli ~/.local/bin/
+git clone https://github.com/pystardust/ani-cli.git ~/.ani-cli-adv
+cp ~/.ani-cli-adv/ani-cli-adv ~/.local/bin/ani-cli-adv
 ```
 
 ##### Optional: add desktop entry:
@@ -213,9 +214,9 @@ In Steam Desktop app:
 
 ```sh
 sudo pkg install mpv fzf aria2 yt-dlp patch git
-git clone "https://github.com/pystardust/ani-cli.git"
-sudo cp ani-cli/ani-cli /usr/local/bin
-rm -rf ani-cli
+git clone "https://github.com/pystardust/ani-cli.git" ani-cli-adv
+sudo cp ani-cli-adv/ani-cli-adv /usr/local/bin/ani-cli-adv
+rm -rf ani-cli-adv
 ```
 
 #### Installation in steps:
@@ -226,7 +227,7 @@ rm -rf ani-cli
 sudo pkg install mpv fzf aria2 yt-dlp patch
 ```
 
-##### Install ani-cli:
+##### Install ani-cli-adv:
 
 install git if you haven't already
 
@@ -237,9 +238,9 @@ sudo pkg install git
 install from source:
 
 ```sh
-git clone "https://github.com/pystardust/ani-cli.git"
-sudo cp ani-cli/ani-cli /usr/local/bin
-rm -rf ani-cli
+git clone "https://github.com/pystardust/ani-cli.git" ani-cli-adv
+sudo cp ani-cli-adv/ani-cli-adv /usr/local/bin/ani-cli-adv
+rm -rf ani-cli-adv
 ```
 
 </details>
@@ -262,7 +263,7 @@ Consider also installing `yt-dlp` and `aria2` for downloading to work.
 After installation, open a Git Bash tab in Windows Terminal and run:
 
 ```sh
-ani-cli -h
+ani-cli-adv -h
 ```
 
 ## Uninstall
@@ -315,10 +316,10 @@ Ani-skip uses the external lua script function of mpv and as such â€“ for now â€
 * Can I change dub language? - No.
 * Can I change media source? - No (unless you can scrape that source yourself).
 * Can I use vlc? - Yes, use `--vlc` or `export ANI_CLI_PLAYER=vlc`.
-* Can I adjust resolution? - Yes, use `-q resolution`, for example `ani-cli -q 1080`.
+* Can I adjust resolution? - Yes, use `-q resolution`, for example `ani-cli-adv -q 1080`.
 * How can I download? - Use `-d`, it will download into your working directory.
 * Can i change download folder? - Yes, set the `ANI_CLI_DOWNLOAD_DIR` to your desired location.
-* How can I bulk download? - `Use -d -e firstepisode-lastepisode`, for example `ani-cli onepiece -d -e 1-1000`.
+* How can I bulk download? - `Use -d -e firstepisode-lastepisode`, for example `ani-cli-adv onepiece -d -e 1-1000`.
 
 **Note:** All features are documented in `ani-cli --help`.
 
