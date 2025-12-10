@@ -249,7 +249,7 @@ sudo cp ani-cli/ani-cli /usr/local/bin
 rm -rf ani-cli
 ```
 
-### Windows install (Scoop, optional)
+#### Windows install (Scoop, optional)
 
 `ani-cli` is also available on Windows via [Scoop](https://scoop.sh/). This is an optional convenience on top of the source install.
 
