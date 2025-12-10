@@ -243,7 +243,23 @@ sudo cp ani-cli-adv/ani-cli-adv /usr/local/bin/ani-cli-adv
 rm -rf ani-cli-adv
 ```
 
-</details>
+#### Linux: fixing `permission denied` when running `ani-cli-adv`
+
+If you see `zsh: permission denied: ani-cli-adv` (or similar) after installing:
+
+```sh
+sudo chmod 755 /usr/local/bin/ani-cli-adv
+ls -l /usr/local/bin/ani-cli-adv   # should show -rwxr-xr-x
+```
+
+If the file came from a Windows checkout and has CRLF line endings, also run:
+
+```sh
+sudo dos2unix /usr/local/bin/ani-cli-adv
+sudo chmod 755 /usr/local/bin/ani-cli-adv
+```
+
+##### Running the smoke tests on Windows
 
 ### Windows install (Scoop, optional)
 
