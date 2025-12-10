@@ -344,3 +344,11 @@ Ani-skip uses the external lua script function of mpv and as such â€“ for now â€
 * [Curd](https://github.com/Wraient/curd): A CLI tool to watch anime with Anilist, Discord RPC, Skip Intro/Outro/Filler/Recap (Go)
 * [FastAnime](https://github.com/Benex254/FastAnime): browser anime experience from the terminal (Python)
 * [ani-skip](https://github.com/KilDesu/ani-skip): Automatically skip opening and ending sequences for IINA on MacOS (Typescript, official IINA plugin API)
+
+## Contribution Guidelines
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how to open issues and submit pull requests.
+
+## Disclaimer
+
+See [disclaimer.md](./disclaimer.md) for legal and usage disclaimers related to this project.
