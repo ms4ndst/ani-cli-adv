@@ -35,8 +35,6 @@ A cli to browse and watch anime (alone AND with friends). This tool scrapes the 
 
 - [Fixing errors](#fixing-errors)
 - [Install](#install)
-  - [Tier 1: Linux, Mac, Android](#tier-1-support-linux-mac-android)
-  - [Tier 2: Windows, WSL, iOS, Steam Deck, FreeBSD](#tier-2-support-windows-wsl-ios-steam-deck-freebsd)
   - [From Source](#installing-from-source)
 - [Uninstall](#uninstall)
 - [Dependencies](#dependencies)
@@ -54,9 +52,6 @@ If after this the issue persists then open an issue.
 
 ## Install
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/ani-cli.svg?minversion=4.0)](https://repology.org/project/ani-cli/versions)
-
-### Tier 1 Support: Linux, Mac, Android
 
 *These Platforms have rock solid support and are used by maintainers and large parts of the userbase.*
 
@@ -161,12 +156,6 @@ For players you can use the apk (playstore/fdroid) versions of mpv and vlc. Note
 
 </details>
 
-### Tier 2 Support: Windows, WSL, iOS, Steam Deck, FreeBSD
-
-*While officially supported (except FreeBSD), installation is more involved on these platforms and sometimes issues arise. \
-Reach out if you need help.*
-
-<details><summary><b>Windows</b></summary>
 
 `ani-cli` is on scoop. Please read further for setup instructions.
 
@@ -433,8 +422,6 @@ sudo cp ani-cli/ani-cli /usr/local/bin
 rm -rf ani-cli
 ```
 
-</details>
-
 ### Installing from source
 
 *This method works for any unix-like operating system and is a baseline for porting efforts.*
@@ -447,81 +434,39 @@ sudo cp ani-cli/ani-cli /usr/local/bin
 rm -rf ani-cli
 ```
 
+#### Windows usage (from source)
+If you prefer PowerShell, this repo includes a wrapper that invokes the shell script via Git Bash:
+
+```sh
+# from the repo root
+.\ani-cli.ps1
+.\ani-cli.ps1 --dub "one piece" -q 1080p
+```
+- The wrapper auto-detects `bash.exe` (Git for Windows). If it cannot find it, install Git for Windows or set `$Env:GIT_INSTALL_ROOT`.
+- Environment toggles in PowerShell:
+```sh
+$Env:ANI_CLI_STARTUP_MENU = 0    # disable startup menu
+$Env:ANI_CLI_PLAYER = 'vlc'      # choose VLC instead of mpv
+```
+
+To run the included smoke tests on Windows:
+```sh
+.\tests\run-tests.ps1          # runs all tests matching smoke-*.sh
+.\tests\run-tests.ps1 -Filter smoke-favorites.sh
+```
+
 ## Uninstall
 
-<details>
-
-* apt:
+- Source install (Linux/macOS/BSD):
 ```sh
-sudo apt remove ani-cli
-# to remove the repository from apt
-sudo rm -f /etc/apt/trusted.gpg.d/ani-cli.asc /etc/apt/sources.list.d/ani-cli-debian.list
+sudo rm /usr/local/bin/ani-cli
 ```
-* dnf:
-```sh
-sudo dnf remove ani-cli      # for ani-cli
-# disable the repo in dnf
-dnf copr disable derisis13/ani-cli
+- Windows (from source):
+  - If you use the PowerShell wrapper in this repo, simply delete it:
+```powershell
+Remove-Item .\ani-cli.ps1
 ```
-You might want to uninstall RPM fusion if you don't use it otherwise
-* zypper:
-```sh
-zypper remove ani-cli
-zypper removerepo ani-cli
-```
-You might want to remove `packman-essentials` if you don't need it otherwise
-* AUR:
-```sh
-yay -R ani-cli
-```
-* Scoop:
-```sh
-scoop uninstall ani-cli
-```
-* Linux:
-```sh
-sudo rm "/usr/local/bin/ani-cli"
-```
-* Mac:
-```sh
-rm "$(brew --prefix)/bin/ani-cli"
-```
-* Windows:
-In **Git Bash** run (as administrator):
-```sh
-rm "/usr/bin/ani-cli"
-```
-* Termux package
-```sh
-pkg remove ani-cli
-```
-* Android:
-```sh
-rm "$PREFIX/bin/ani-cli"
-```
-* Steam Deck
-```sh
-rm "~/.local/bin/ani-cli"
-rm -rf ~/.ani-cli
-```
-optionally: remove dependencies:
-```sh
-rm ~/.local/bin/aria2c
-rm ~/.local/bin/yt-dlp
-rm -rf "~/.aria2"
-rm -rf "~/.fzf"
-flatpak uninstall io.mpv.Mpv
-```
-* iOS
-```
-rm -rf /usr/local/bin/ani-cli
-```
-To uninstall other dependencies:
-```
-apk del grep sed curl fzf git aria2 ffmpeg ncurses
-```
-
-</details>
+  - If you cloned the upstream repo elsewhere and copied the script manually, remove that copy accordingly.
 
 ## Dependencies
 
