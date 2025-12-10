@@ -1,29 +1,9 @@
-<p align=center>
-<br>
-<a href="http://makeapullrequest.com"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"></a>
-<img src="https://img.shields.io/badge/os-linux-brightgreen">
-<img src="https://img.shields.io/badge/os-mac-brightgreen">
-<img src="https://img.shields.io/badge/os-android-brightgreen">
-<img src="https://img.shields.io/badge/os-windows-yellowgreen">
-<img src="https://img.shields.io/badge/os-ios-yellow">
-<img src="https://img.shields.io/badge/os-steamdeck-yellow">
-<br>
-<h1 align="center">
-<a href="https://discord.gg/aqu7GpqVmR"><img src="https://invidget.switchblade.xyz/aqu7GpqVmR"></a>
-<a href="matrix.md"><img src="/.assets/matrix-logo.svg" height=110></a>
-<br>
-<a href="https://github.com/port19x"><img src="https://img.shields.io/badge/lead-port19x-lightblue"></a>
-<a href="https://github.com/CoolnsX"><img src="https://img.shields.io/badge/maintainer-CoolnsX-blue"></a>
-<a href="https://github.com/justchokingaround"><img src="https://img.shields.io/badge/maintainer-justchokingaround-blue"></a>
-<a href="https://github.com/Derisis13"><img src="https://img.shields.io/badge/maintainer-Derisis13-blue"></a>
-<a href="https://github.com/71zenith"><img src="https://img.shields.io/badge/maintainer-71zenith-blue"></a>
-<a href="https://github.com/ykhan21"><img src="https://img.shields.io/badge/maintainer-ykhan21-blue"></a>
-
-</p>
 
 <h3 align="center">
 A cli to browse and watch anime (alone AND with friends). This tool scrapes the site <a href="https://allmanga.to/">allmanga.</a>
 </h3>
+
+**Credits / Upstream project:** This repository is based on and extends the original [`ani-cli`](https://github.com/pystardust/ani-cli/) project.
 
 <h1 align="center">
 	Showcase
@@ -33,6 +13,7 @@ A cli to browse and watch anime (alone AND with friends). This tool scrapes the 
 
 ## Table of Contents
 
+- [Version](#version)
 - [Fixing errors](#fixing-errors)
 - [Install](#install)
   - [From Source](#installing-from-source)
@@ -43,6 +24,18 @@ A cli to browse and watch anime (alone AND with friends). This tool scrapes the 
 - [Homies](#homies)
 - [Contribution Guidelines](./CONTRIBUTING.md)
 - [Disclaimer](./disclaimer.md)
+
+## Version
+
+Current version: `4.10.5-adv1` (based on upstream `ani-cli` 4.10.4).
+
+### Added / changed in this fork
+
+- Favorites: mark a series as favorite from the in-player menu (`favorite` / `unfavorite`) and store them under `~/.local/state/ani-cli/favorites`.
+- Last watched / Resume: remember the last watched series and episode and offer a `Resume` option on interactive startup.
+- Startup menu: when launched interactively with no query, show a menu with `Resume`, `Favorites`, and `Search`.
+- Windows usage: simplified docs and guidance for running via Git Bash and (optionally) installing via Scoop.
+- README cleanup: removed most distro-specific packaging details and focused on source install and this fork's behavior.
 
 ## Fixing errors
 
