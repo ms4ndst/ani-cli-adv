@@ -217,29 +217,9 @@ Restart Windows Terminal. Go to the Git Bash profile and update `ani-cli` with `
 
 Now you can use ani-cli. Read the output of `ani-cli -h` for more help.
 
-##### PowerShell quick start (wrapper)
-If you prefer PowerShell, this repo includes a wrapper that invokes the shell script via Git Bash:
-
-```sh path=null start=null
-# from the repo root
-.\ani-cli.ps1
-.\ani-cli.ps1 --dub "one piece" -q 1080p
-```
-- The wrapper auto-detects `bash.exe` (Git for Windows). If it cannot find it, install Git for Windows or set `$Env:GIT_INSTALL_ROOT`.
-- Environment toggles in PowerShell:
-```sh path=null start=null
-$Env:ANI_CLI_STARTUP_MENU = 0    # disable startup menu
-$Env:ANI_CLI_PLAYER = 'vlc'      # choose VLC instead of mpv
-```
-
 ##### Running the smoke tests on Windows
-- From PowerShell:
-```sh path=null start=null
-.\tests\run-tests.ps1          # runs all tests matching smoke-*.sh
-.\tests\run-tests.ps1 -Filter smoke-favorites.sh
-```
 - From Git Bash:
-```sh path=null start=null
+```sh
 sh tests/smoke-favorites.sh
 sh tests/smoke-lastwatched.sh
 ```
@@ -434,40 +414,12 @@ sudo cp ani-cli/ani-cli /usr/local/bin
 rm -rf ani-cli
 ```
 
-#### Windows usage (from source)
-If you prefer PowerShell, this repo includes a wrapper that invokes the shell script via Git Bash:
-
-```sh
-# from the repo root
-.\ani-cli.ps1
-.\ani-cli.ps1 --dub "one piece" -q 1080p
-```
-- The wrapper auto-detects `bash.exe` (Git for Windows). If it cannot find it, install Git for Windows or set `$Env:GIT_INSTALL_ROOT`.
-- Environment toggles in PowerShell:
-```sh
-$Env:ANI_CLI_STARTUP_MENU = 0    # disable startup menu
-$Env:ANI_CLI_PLAYER = 'vlc'      # choose VLC instead of mpv
-```
-
-To run the included smoke tests on Windows:
-```sh
-.\tests\run-tests.ps1          # runs all tests matching smoke-*.sh
-.\tests\run-tests.ps1 -Filter smoke-favorites.sh
-```
-
 ## Uninstall
 
 - Source install (Linux/macOS/BSD):
 ```sh
 sudo rm /usr/local/bin/ani-cli
 ```
-- Windows (from source):
-  - If you use the PowerShell wrapper in this repo, simply delete it:
-```powershell
-Remove-Item .\ani-cli.ps1
-```
-  - If you cloned the upstream repo elsewhere and copied the script manually, remove that copy accordingly.
-
 ## Dependencies
 
 - grep
