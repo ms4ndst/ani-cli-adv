@@ -54,7 +54,7 @@ Install dependencies [(See below)](#dependencies)
 
 ```sh
 git clone "https://github.com/ms4ndst/ani-cli-adv.git" ani-cli-adv
-sudo cp ani-cli-adv/ani-cli /usr/local/bin
+sudo cp ani-cli-adv/ani-cli-adv /usr/local/bin
 rm -rf ani-cli-adv
 ```
 
