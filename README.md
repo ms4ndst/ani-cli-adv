@@ -53,7 +53,7 @@ If after this the issue persists then open an issue.
 Install dependencies [(See below)](#dependencies)
 
 ```sh
-git clone "https://github.com/pystardust/ani-cli.git" ani-cli-adv
+git clone "https://github.com/ms4ndst/ani-cli-adv.git" ani-cli-adv
 sudo cp ani-cli-adv/ani-cli /usr/local/bin
 rm -rf ani-cli-adv
 ```
@@ -290,17 +290,17 @@ sudo rm /usr/local/bin/ani-cli
 ```
 ## Dependencies
 
-- grep
-- sed
-- curl
-- mpv - Video Player
-- iina - mpv replacement for MacOS
-- aria2c - Download manager
-- yt-dlp - m3u8 Downloader
-- ffmpeg - m3u8 Downloader (fallback)
-- fzf - User interface
-- ani-skip (optional)
-- patch - Self updating
+- `grep`
+- `sed`
+- `curl`
+- `mpv` - Video Player
+- `iina` - mpv replacement for MacOS
+- `aria2c` - Download manager
+- `yt-dlp` - m3u8 Downloader
+- `ffmpeg` - m3u8 Downloader (fallback)
+- `fzf` - User interface
+- `ani-skip` (optional)
+- `patch` - Self updating
 
 ### Ani-Skip
 
