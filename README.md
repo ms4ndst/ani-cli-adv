@@ -259,7 +259,7 @@ sudo dos2unix /usr/local/bin/ani-cli-adv
 sudo chmod 755 /usr/local/bin/ani-cli-adv
 ```
 
-##### Running the smoke tests on Windows
+</details>
 
 ### Windows install (Scoop, optional)
 
@@ -288,6 +288,7 @@ ani-cli-adv -h
 ```sh
 sudo rm /usr/local/bin/ani-cli
 ```
+
 ## Dependencies
 
 - `grep`
