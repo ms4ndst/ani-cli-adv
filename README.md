@@ -95,7 +95,7 @@ then run this:
 ```sh
 apk add grep sed curl fzf git aria2 ncurses patch
 apk add ffmpeg
-git clone --depth 1 https://github.com/pystardust/ani-cli ~/.ani-cli-adv
+git clone --depth 1 https://github.com/ms4ndst/ani-cli-adv.git ~/.ani-cli-adv
 cp ~/.ani-cli-adv/ani-cli-adv /usr/local/bin/ani-cli-adv
 chmod +x /usr/local/bin/ani-cli-adv
 rm -rf ~/.ani-cli-adv
@@ -131,7 +131,7 @@ curl -o ~/.patch/patch.tar.zst https://mirror.sunred.org/archlinux/core/os/x86_6
 tar xvf ~/.patch/patch.tar.zst -C ~/.patch/
 cp ~/.patch/usr/bin/patch ~/.local/bin/
 
-git clone https://github.com/pystardust/ani-cli.git ~/.ani-cli-adv
+git clone https://github.com/ms4ndst/ani-cli-adv.git ~/.ani-cli-adv
 cp ~/.ani-cli-adv/ani-cli-adv ~/.local/bin/ani-cli-adv
 
 flatpak install io.mpv.Mpv
@@ -190,7 +190,7 @@ cp ~/.patch/usr/bin/patch ~/.local/bin/
 ##### Install ani-cli:
 
 ```sh
-git clone https://github.com/pystardust/ani-cli.git ~/.ani-cli-adv
+git clone https://github.com/ms4ndst/ani-cli-adv.git ~/.ani-cli-adv
 cp ~/.ani-cli-adv/ani-cli-adv ~/.local/bin/ani-cli-adv
 ```
 
@@ -214,7 +214,7 @@ In Steam Desktop app:
 
 ```sh
 sudo pkg install mpv fzf aria2 yt-dlp patch git
-git clone "https://github.com/pystardust/ani-cli.git" ani-cli-adv
+git clone "https://github.com/ms4ndst/ani-cli-adv.git" ani-cli-adv
 sudo cp ani-cli-adv/ani-cli-adv /usr/local/bin/ani-cli-adv
 rm -rf ani-cli-adv
 ```
@@ -238,7 +238,7 @@ sudo pkg install git
 install from source:
 
 ```sh
-git clone "https://github.com/pystardust/ani-cli.git" ani-cli-adv
+git clone "https://github.com/ms4ndst/ani-cli-adv.git" ani-cli-adv
 sudo cp ani-cli-adv/ani-cli-adv /usr/local/bin/ani-cli-adv
 rm -rf ani-cli-adv
 ```
