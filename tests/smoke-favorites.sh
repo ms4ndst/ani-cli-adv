@@ -8,19 +8,19 @@ tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
 
 favorites_file="$tmpdir/favorites"
-: >"$favorites_file"
+touch "$favorites_file"
 
 add_favorite_current() {
-    [ ! -f "$favorites_file" ] && : >"$favorites_file"
-    if ! grep -q "^${id}\t" "$favorites_file" 2>/dev/null; then
-        printf "%s\t%s\n" "$id" "$title" >>"$favorites_file"
+    [ ! -f "$favorites_file" ] && touch "$favorites_file"
+    if ! grep -q "^${id}	" "$favorites_file" 2>/dev/null; then
+        printf "%s	%s\n" "$id" "$title" >>"$favorites_file"
     fi
 }
 
 remove_favorite_current() {
     [ -f "$favorites_file" ] || return 0
-    if grep -q "^${id}\t" "$favorites_file" 2>/dev/null; then
-        sed "/^${id}\t/d" "$favorites_file" >"${favorites_file}.new" && mv "${favorites_file}.new" "$favorites_file"
+    if grep -q "^${id}	" "$favorites_file" 2>/dev/null; then
+        sed "/^${id}	/d" "$favorites_file" >"${favorites_file}.new" && mv "${favorites_file}.new" "$favorites_file"
     fi
 }
 
@@ -30,7 +30,11 @@ list_favorites() {
 
 fail() { echo "FAIL: $*" >&2; exit 1; }
 assert_grep() { pattern="$1"; file="$2"; grep -q "$pattern" "$file" || fail "pattern not found: $pattern in $file"; }
-assert_lines() { expected="$1"; file="$2"; c=$(wc -l <"$file" | tr -d '[:space:]'); [ "$c" = "$expected" ] || fail "expected $expected lines, got $c"; }
+assert_lines() { 
+    expected="$1"; file="$2"; 
+    c=$(wc -l <"$file" | tr -d '[:space:]'); 
+    [ "$c" = "$expected" ] || fail "expected $expected lines, got $c"; 
+}
 
 # Add once
 id="abc"; title="Dummy (12 episodes)"; add_favorite_current
