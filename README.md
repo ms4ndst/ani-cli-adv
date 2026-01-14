@@ -318,15 +318,22 @@ Ani-skip uses the external lua script function of mpv and as such â€“ for now â€
 
 ## Favorites and Last Played
 
-- Favorites
-  - While watching, open the in-player menu and select "favorite" or "unfavorite" to toggle the current series.
-  - Stored at `$ANI_CLI_HIST_DIR/favorites` (default: `~/.local/state/ani-cli/favorites`). One entry per line: `<id>\t<title>`.
-- Last played
-  - All watched series and episodes are recorded in `$ANI_CLI_HIST_DIR/last` as `<id>\t<title>\t<episode>`.
-  - On interactive startup with no query, ani-cli shows a startup menu with `Last played`, `Favorites`, and `Search`.
-  - Select from the `Last played` list to resume watching from where you left off.
-  - Remove individual series from the last played list via the in-player menu option `remove_from_last_played`.
-  - To disable the startup menu, set `ANI_CLI_STARTUP_MENU=0`.
+### Favorites
+- **Add/Remove**: While watching, open the in-player menu and select `favorite` or `unfavorite` to toggle the current series.
+- **View at startup**: Select `Favorites` from the startup menu to see all your favorited series.
+- **Storage**: Stored at `$ANI_CLI_HIST_DIR/favorites` (default: `~/.local/state/ani-cli/favorites`). One entry per line: `<id>\t<title>`.
+
+### Last Played
+- **Automatic tracking**: All watched series and episodes are automatically recorded in `$ANI_CLI_HIST_DIR/last` as `<id>\t<title>\t<episode>`.
+- **Resume watching**: 
+  1. Launch `ani-cli-adv` without any arguments
+  2. Select `Last played` from the startup menu
+  3. Choose any series from the list to resume from where you left off
+- **Remove series**: 
+  1. Start watching any series (or resume it)
+  2. After an episode finishes, the menu appears
+  3. Select `remove_from_last_played` to remove the current series from the list
+- **Disable startup menu**: Set `ANI_CLI_STARTUP_MENU=0` to skip the menu and go straight to search.
 
 ## FAQ
 <details>
