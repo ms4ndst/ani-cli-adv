@@ -86,15 +86,17 @@ help_info() {
         Update the script
 
     Startup behavior:
-      - If launched interactively with no query, a menu offers: Resume, Favorites, Search.
+      - If launched interactively with no query, a menu offers: Last played, Favorites, Search.
       - Disable this menu by setting ANI_CLI_STARTUP_MENU=0.
 
     Favorites:
       - While watching, open the menu and choose 'favorite'/'unfavorite' to toggle the current series.
       - Favorites are stored in $ANI_CLI_HIST_DIR/favorites (default: ~/.local/state/ani-cli/favorites).
 
-    Last watched:
-      - The most recent series/episode is recorded in $ANI_CLI_HIST_DIR/last and shown as Resume at startup.
+    Last played:
+      - All watched series/episodes are recorded in $ANI_CLI_HIST_DIR/last.
+      - Select from the Last played list at startup to resume watching from where you left off.
+      - Remove individual series from the list via the in-player menu option 'remove_from_last_played'.
 
     Some example usages:
       %s -q 720p banana fish
@@ -310,6 +312,36 @@ list_favorites() {
     [ -f "$favorites_file" ] && [ -s "$favorites_file" ] && cat "$favorites_file"
 }
 
+# Last played utilities
+list_last_played() {
+    [ -f "$last_state_file" ] && [ -s "$last_state_file" ] && cat "$last_state_file"
+}
+
+remove_last_played_current() {
+    [ -f "$last_state_file" ] || return 0
+    if grep -q "^${id}\t" "$last_state_file" 2>/dev/null; then
+        sed "/^${id}\t/d" "$last_state_file" >"${last_state_file}.new" && mv "${last_state_file}.new" "$last_state_file"
+        printf "\033[1;32mRemoved from last played:\033[0m %s\n" "$title" 1>&2
+    else
+        printf "\033[1;33mNot in last played:\033[0m %s\n" "$title" 1>&2
+    fi
+}
+
+# Last played utilities
+list_last_played() {
+    [ -f "$last_state_file" ] && [ -s "$last_state_file" ] && cat "$last_state_file"
+}
+
+remove_last_played_current() {
+    [ -f "$last_state_file" ] || return 0
+    if grep -q "^${id}\t" "$last_state_file" 2>/dev/null; then
+        sed "/^${id}\t/d" "$last_state_file" >"${last_state_file}.new" && mv "${last_state_file}.new" "$last_state_file"
+        printf "\033[1;32mRemoved from last played:\033[0m %s\n" "$title" 1>&2
+    else
+        printf "\033[1;33mNot in last played:\033[0m %s\n" "$title" 1>&2
+    fi
+}
+
 # Startup selector (Resume, Favorites, Search)
 startup_select() {
     # Only interactive sessions without predefined query should see this
@@ -317,12 +349,8 @@ startup_select() {
     [ -t 0 ] || return 1
 
     options=""
-    if [ -f "$last_state_file" ] && [ -s "$last_state_file" ]; then
-        last_id=$(cut -f1 "$last_state_file")
-        last_title=$(cut -f2 "$last_state_file")
-        last_ep=$(cut -f3 "$last_state_file")
-        options=$(printf "%s\nresume: %s - episode %s" "$options" "$last_title" "$last_ep")
-    fi
+    last_played=$(list_last_played)
+    [ -n "$last_played" ] && options=$(printf "%s\nLast played" "$options")
 
     favs=$(list_favorites)
     [ -n "$favs" ] && options=$(printf "%s\nFavorites" "$options")
@@ -332,10 +360,14 @@ startup_select() {
     [ -z "$sel" ] && return 1
 
     case "$sel" in
-        resume:*)
-            id="$last_id"
-            title="$last_title"
+        "Last played")
+            last_sel=$(list_last_played | nl -w 2 | sed 's/^[[:space:]]//' | nth "Select series to resume: ")
+            [ -z "$last_sel" ] && return 1
+            id=$(printf "%s" "$last_sel" | cut -f1)
+            title=$(printf "%s" "$last_sel" | cut -f2)
             ep_list=$(episodes_list "$id")
+            # Resume from the last watched episode
+            last_ep=$(printf "%s" "$last_sel" | cut -f3)
             ep_no="$last_ep"
             allanime_title="$(printf "%s" "$title" | cut -d'(' -f1 | tr -d '[:punct:]')"
             preselected=1
@@ -365,8 +397,12 @@ update_history() {
         printf "%s\t%s\t%s\n" "$ep_no" "$id" "$title" >>"${histfile}.new"
     fi
     mv "${histfile}.new" "$histfile"
-    # Persist last watched suggestion
-    printf "%s\t%s\t%s\n" "$id" "$title" "$ep_no" >"$last_state_file"
+    # Persist last watched - append to list if not already present, else update
+    if [ -f "$last_state_file" ] && grep -q "^${id}\t" "$last_state_file" 2>/dev/null; then
+        # Update existing entry with new episode number
+        sed "/^${id}\t/d" "$last_state_file" >"${last_state_file}.new" && mv "${last_state_file}.new" "$last_state_file"
+    fi
+    printf "%s\t%s\t%s\n" "$id" "$title" "$ep_no" >>"$last_state_file"
 }
 
 download() {
@@ -656,7 +692,7 @@ tput sc
 play
 [ "$player_function" = "download" ] || [ "$player_function" = "debug" ] && exit 0
 
-while cmd=$(printf "next\nreplay\nprevious\nselect\nchange_quality\nfavorite\nunfavorite\nquit" | nth "Playing episode $ep_no of $title... "); do
+while cmd=$(printf "next\nreplay\nprevious\nselect\nchange_quality\nfavorite\nunfavorite\nremove_from_last_played\nquit" | nth "Playing episode $ep_no of $title... "); do
     case "$cmd" in
         next) ep_no=$(printf "%s" "$ep_list" | sed -n "/^${ep_no}$/{n;p;}") 2>/dev/null ;;
         replay) episode="$replay" ;;
@@ -671,6 +707,9 @@ while cmd=$(printf "next\nreplay\nprevious\nselect\nchange_quality\nfavorite\nun
             ;;
         unfavorite)
             remove_favorite_current
+            ;;
+        remove_from_last_played)
+            remove_last_played_current
             ;;
         *) exit 0 ;;
     esac

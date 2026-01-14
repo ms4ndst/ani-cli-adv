@@ -32,8 +32,9 @@ Current version: `4.10.5-adv2` (based on upstream `ani-cli` 4.10.4).
 ### Added / changed in this fork
 
 - Favorites: mark a series as favorite from the in-player menu (`favorite` / `unfavorite`) and store them under `~/.local/state/ani-cli/favorites`.
-- Last watched / Resume: remember the last watched series and episode and offer a `Resume` option on interactive startup.
-- Startup menu: when launched interactively with no query, show a menu with `Resume`, `Favorites`, and `Search`.
+- Last watched / Resume: remember all watched series and episodes, offering a `Last played` list on interactive startup with the ability to resume from where you left off.
+- Startup menu: when launched interactively with no query, show a menu with `Last played`, `Favorites`, and `Search`.
+- Remove from last played: remove individual series from the last played list via the in-player menu option `remove_from_last_played`.
 - CLI name: install and use this fork as `ani-cli-adv` (binary and manpage), keeping links and credits pointing to the upstream `ani-cli` project.
 - Windows usage: simplified docs and guidance for running via Git Bash and (optionally) installing via Scoop.
 - README cleanup: removed most distro-specific packaging details, normalized install snippets across platforms, and documented the new features of this fork.
@@ -315,15 +316,17 @@ Ani-skip uses the external lua script function of mpv and as such â€“ for now â€
 
 **Note:** It may be, that ani-skip won't know the anime you're trying to watch. Try using the `--skip-title <title>` command line argument. (It uses the [aniskip API](https://github.com/lexesjan/typescript-aniskip-extension/tree/main/src/api/aniskip-http-client) and you can contribute missing anime or ask for including it in the database on their [discord server](https://discord.com/invite/UqT55CbrbE)).
 
-## Favorites and Resume
+## Favorites and Last Played
 
 - Favorites
   - While watching, open the in-player menu and select "favorite" or "unfavorite" to toggle the current series.
   - Stored at `$ANI_CLI_HIST_DIR/favorites` (default: `~/.local/state/ani-cli/favorites`). One entry per line: `<id>\t<title>`.
-- Last watched / Resume
-  - The most recently watched series and episode are written to `$ANI_CLI_HIST_DIR/last` as `<id>\t<title>\t<episode>`.
-  - On interactive startup with no query, ani-cli shows a startup menu with `Resume`, `Favorites`, and `Search`.
-  - To disable this startup menu, set `ANI_CLI_STARTUP_MENU=0`.
+- Last played
+  - All watched series and episodes are recorded in `$ANI_CLI_HIST_DIR/last` as `<id>\t<title>\t<episode>`.
+  - On interactive startup with no query, ani-cli shows a startup menu with `Last played`, `Favorites`, and `Search`.
+  - Select from the `Last played` list to resume watching from where you left off.
+  - Remove individual series from the last played list via the in-player menu option `remove_from_last_played`.
+  - To disable the startup menu, set `ANI_CLI_STARTUP_MENU=0`.
 
 ## FAQ
 <details>
