@@ -7,11 +7,6 @@ A CLI to browse and watch anime (alone AND with friends). This tool scrapes <a h
 
 **Upstream:** `ani-cli-adv` is a fork of the original [`ani-cli`](https://github.com/pystardust/ani-cli/) by pystardust. This README, the install snippets, and the binary name all refer to **this fork**. Where behavior is unchanged from upstream, links to the original project are preserved.
 
-<h1 align="center">
-	Showcase
-</h1>
-
-[ani-cli-demo.webm](https://user-images.githubusercontent.com/44473782/224679247-0856e652-f187-4865-bbcf-5a8e5cf830da.webm)
 
 ## Table of Contents
 
