@@ -1,9 +1,11 @@
 
+<h1 align="center">ani-cli-adv</h1>
+
 <h3 align="center">
-A cli to browse and watch anime (alone AND with friends). This tool scrapes the site <a href="https://allmanga.to/">allmanga.</a>
+A CLI to browse and watch anime (alone AND with friends). This tool scrapes <a href="https://allanime.day/">allanime.day</a>.
 </h3>
 
-**Credits / Upstream project:** This repository is based on and extends the original [`ani-cli`](https://github.com/pystardust/ani-cli/) project.
+**Upstream:** `ani-cli-adv` is a fork of the original [`ani-cli`](https://github.com/pystardust/ani-cli/) by pystardust. This README, the install snippets, and the binary name all refer to **this fork**. Where behavior is unchanged from upstream, links to the original project are preserved.
 
 <h1 align="center">
 	Showcase
@@ -16,7 +18,8 @@ A cli to browse and watch anime (alone AND with friends). This tool scrapes the 
 - [Version](#version)
 - [Fixing errors](#fixing-errors)
 - [Install](#install)
-  - [From Source](#installing-from-source)
+  - [Windows](#windows)
+  - [Linux / macOS / BSD (from source)](#installing-from-source-linux--macos--bsd)
 - [Uninstall](#uninstall)
 - [Dependencies](#dependencies)
   - [Ani-Skip](#ani-skip)
@@ -35,8 +38,9 @@ Current version: `4.10.5-adv2` (based on upstream `ani-cli` 4.10.4).
 - Last watched / Resume: remember all watched series and episodes, offering a `Last played` list on interactive startup with the ability to resume from where you left off.
 - Startup menu: when launched interactively with no query, show a menu with `Last played`, `Favorites`, and `Search`.
 - Remove from last played: remove individual series from the last played list via the in-player menu option `remove_from_last_played`.
-- CLI name: install and use this fork as `ani-cli-adv` (binary and manpage), keeping links and credits pointing to the upstream `ani-cli` project.
-- Windows usage: simplified docs and guidance for running via Git Bash and (optionally) installing via Scoop.
+- CLI name: install and use this fork as `ani-cli-adv` (binary and manpage), keeping credits pointing to the upstream `ani-cli` project.
+- API restored: ported the upstream switch to POST/JSON GraphQL calls plus AES-256-CTR `tobeparsed` decryption, so search, episode listing, and source resolution work again against the current AllAnime API.
+- Windows usage: simplified docs and guidance for running via Git Bash.
 - README cleanup: removed most distro-specific packaging details, normalized install snippets across platforms, and documented the new features of this fork.
 
 ## Fixing errors
@@ -47,9 +51,81 @@ If after this the issue persists then open an issue.
 
 ## Install
 
-### Installing from source
+### Windows
 
-*This method works for any unix-like operating system and is a baseline for porting efforts.*
+The recommended setup is **Windows Terminal + Git Bash + Scoop for dependencies**. Run each block in the shell indicated by its comment.
+
+#### 1. Install Scoop (skip if you already have it)
+
+In **PowerShell**:
+
+```powershell
+# Allow running the installer for the current user, then bootstrap Scoop
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+```
+
+#### 2. Install Windows Terminal, Git, and runtime dependencies
+
+In **PowerShell**:
+
+```powershell
+scoop bucket add extras
+scoop install extras/windows-terminal
+scoop install git fzf mpv ffmpeg
+# Optional, for the -d (download) feature:
+scoop install yt-dlp aria2
+```
+
+> `scoop install ani-cli` installs the **upstream** project — not this fork. Skip it. The fork ships as `ani-cli-adv` and can coexist with upstream if you want both.
+
+Open Windows Terminal and add a Git Bash profile (Settings → Add a new profile → Duplicate → command: `"C:\Program Files\Git\bin\bash.exe" -li`). All remaining steps run in a **Git Bash** tab.
+
+#### 3. Install ani-cli-adv
+
+In **Git Bash**:
+
+```sh
+git clone https://github.com/ms4ndst/ani-cli-adv.git ~/.ani-cli-adv
+mkdir -p ~/bin
+cp ~/.ani-cli-adv/ani-cli-adv ~/bin/ani-cli-adv
+chmod +x ~/bin/ani-cli-adv
+
+# Ensure ~/bin is on PATH for future shells
+grep -qxF 'export PATH="$HOME/bin:$PATH"' ~/.bashrc 2>/dev/null \
+    || echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+export PATH="$HOME/bin:$PATH"
+```
+
+#### 4. Verify
+
+```sh
+ani-cli-adv -h
+```
+
+If you see the help text, you're done. To update later, run `ani-cli-adv -U`.
+
+#### Running the smoke tests (Git Bash)
+
+```sh
+cd ~/.ani-cli-adv
+sh tests/smoke-favorites.sh
+sh tests/smoke-lastwatched.sh
+sh tests/smoke-search.sh    # live API check: search, episode list, decryption
+```
+
+#### Windows: Known Problems
+
+If you have a problem, first update with `ani-cli-adv -U`. Then check the list below.
+
+- **Stuck in "Search anime:"** — This happens with the mintty terminal that Git Bash uses by default. Either run from a Git Bash tab inside **Windows Terminal** (recommended) or, if you must stick with mintty, run `export MSYS=enable_pcon` before `ani-cli-adv`.
+- **"No such file or directory" / WSL errors when launching from PowerShell or cmd** — WSL's `bash.exe` is being picked up instead of Git's. Run `ani-cli-adv` from a **Git Bash** tab. If you must launch from PowerShell, invoke it explicitly: `& "C:\Program Files\Git\bin\bash.exe" -lc "ani-cli-adv"`.
+- **Old curl** — curl `7.83.1` is known broken; `7.86.0`+ works. Git for Windows ships a recent curl, so this only bites if an older one is earlier on PATH. Run `which curl` in Git Bash to confirm.
+- **mpv config location** — If you installed mpv via Scoop, mpv reads its config from `%USERPROFILE%\scoop\apps\mpv\current\portable_config`. See the [mpv portable_config docs](https://mpv.io/manual/stable/).
+
+### Installing from source (Linux / macOS / BSD)
+
+*Baseline POSIX install. For Windows, use the section above instead.*
 
 Install dependencies [(See below)](#dependencies)
 
@@ -58,25 +134,6 @@ git clone "https://github.com/ms4ndst/ani-cli-adv.git" ani-cli-adv
 sudo cp ani-cli-adv/ani-cli-adv /usr/local/bin
 rm -rf ani-cli-adv
 ```
-
-##### Running the smoke tests on Windows
-- From Git Bash:
-```sh
-sh tests/smoke-favorites.sh
-sh tests/smoke-lastwatched.sh
-```
-
-#### Windows: Known Problems and Solutions
-
-If you have a problem, please update ani-cli to the latest version with `ani-cli -U`. If you still have a problem, please read further.
-
-- Stuck in "Search anime:". This shouldn't happen if you are using the Windows Terminal + Bash setup described above. It happens if you are using the Git Bash terminal (i.e., the mintty terminal). This is a problem between fzf and mintty, which should be resolved in future versions of fzf. For the time being, either use the Windows Terminal setup described above or, if you are dead-set on using the mintty terminal, run `export MSYS=enable_pcon` before running ani-cli.
-- "No such file or directory" or WSL-related errors: This shouldn't happen if you are using the Window Terminal + Bash setup described above. This happens if you run ani-cli in powershell or cmd. This is due WSL's bash.exe being called instead of Git for Windows' bash.exe in `%USERPROFILE%\scoop\shims\ani-cli.cmd`. If you must use powershell or cmd, edit the `%USERPROFILE%\scoop\shims\ani-cli.cmd` file. In File Explorer, go to the `C:\Users\USERNAME\scoop\shims` directory and open the `ani-cli.cmd` file with notepad. Next:
-    - If you installed git with scoop, replace `@bash` with `@"%GIT_INSTALL_ROOT%\bin\bash.exe"`, or
-    - If you installed git by other means, replace `@bash` with `@"C:\Program Files\Git\bin\bash.exe"`.
-This should be fixed if the ani-cli scoop manifest gets updated in [this PR](https://github.com/ScoopInstaller/Extras/pull/13342).
-- curl can cause issues. ani-cli has been tested unsuccessfully with curl `7.83.1` and successfully with `7.86.0`. If you run into issues, try installing a newer one with scoop.
-- If you installed mpv with scoop, your mpv configuration will get read from `C:\Users\USERNAME\scoop\apps\mpv\current\portable_config`. See [the mpv documentation](https://mpv.io/manual/stable/) regarding `portable_config` for more details.
 
 <details><summary><b>WSL</b></summary>
 
@@ -101,7 +158,7 @@ cp ~/.ani-cli-adv/ani-cli-adv /usr/local/bin/ani-cli-adv
 chmod +x /usr/local/bin/ani-cli-adv
 rm -rf ~/.ani-cli-adv
 ```
-note that downloading is going to be very slow. This is an iSH issue, not an ani-cli issue.
+note that downloading is going to be very slow. This is an iSH issue, not an `ani-cli-adv` issue.
 </details>
 
 <details><summary><b>Steam Deck</b></summary>
@@ -188,7 +245,7 @@ tar xvf ~/.patch/patch.tar.zst -C ~/.patch/
 cp ~/.patch/usr/bin/patch ~/.local/bin/
 ```
 
-##### Install ani-cli:
+##### Install ani-cli-adv:
 
 ```sh
 git clone https://github.com/ms4ndst/ani-cli-adv.git ~/.ani-cli-adv
@@ -201,12 +258,12 @@ cp ~/.ani-cli-adv/ani-cli-adv ~/.local/bin/ani-cli-adv
 echo '[Desktop Entry]
 Encoding=UTF-8
 Type=Application
-Exec=bash -c "source $HOME/.'$(echo $SHELL | sed -nE "s|.*/(.*)\$|\1|p")'rc && konsole --fullscreen -e ani-cli"
-Name=ani-cli' > $HOME/.local/share/applications/ani-cli.desktop
+Exec=bash -c "source $HOME/.'$(echo $SHELL | sed -nE "s|.*/(.*)\$|\1|p")'rc && konsole --fullscreen -e ani-cli-adv"
+Name=ani-cli-adv' > $HOME/.local/share/applications/ani-cli-adv.desktop
 ```
-The .desktop entry will allow to start ani-cli in Konsole directly from "Gaming Mode"
+The .desktop entry will allow you to start `ani-cli-adv` in Konsole directly from "Gaming Mode".
 In Steam Desktop app:
-`Add game` > `Add a non-steam game` > tick a box for `ani-cli` > `Add selected programs`
+`Add game` > `Add a non-steam game` > tick a box for `ani-cli-adv` > `Add selected programs`
 </details>
 
 <details><summary><b>FreeBSD</b></summary>
@@ -262,32 +319,19 @@ sudo chmod 755 /usr/local/bin/ani-cli-adv
 
 </details>
 
-### Windows install (Scoop, optional)
-
-`ani-cli` is also available on Windows via [Scoop](https://scoop.sh/). This is an optional convenience on top of the source install.
-
-We recommend using Windows Terminal with a Git Bash profile. In PowerShell:
-
-```sh
-scoop bucket add extras
-scoop install extras/windows-terminal
-scoop install git
-scoop install ani-cli fzf ffmpeg mpv
-```
-
-Consider also installing `yt-dlp` and `aria2` for downloading to work.
-
-After installation, open a Git Bash tab in Windows Terminal and run:
-
-```sh
-ani-cli-adv -h
-```
-
 ## Uninstall
 
-- Source install (Linux/macOS/BSD):
+- Linux / macOS / BSD:
 ```sh
-sudo rm /usr/local/bin/ani-cli
+sudo rm /usr/local/bin/ani-cli-adv
+```
+
+- Windows (Git Bash):
+```sh
+rm ~/bin/ani-cli-adv
+rm -rf ~/.ani-cli-adv
+# Optional: remove the PATH line we added in step 3
+sed -i '/export PATH="\$HOME\/bin:\$PATH"/d' ~/.bashrc
 ```
 
 ## Dependencies
@@ -348,7 +392,7 @@ Ani-skip uses the external lua script function of mpv and as such – for now �
 * Can i change download folder? - Yes, set the `ANI_CLI_DOWNLOAD_DIR` to your desired location.
 * How can I bulk download? - `Use -d -e firstepisode-lastepisode`, for example `ani-cli-adv onepiece -d -e 1-1000`.
 
-**Note:** All features are documented in `ani-cli --help`.
+**Note:** All features are documented in `ani-cli-adv --help`.
 
 </details>
 
