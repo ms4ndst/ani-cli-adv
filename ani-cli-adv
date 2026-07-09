@@ -251,7 +251,7 @@ get_episode_url() {
         api_resp="$(curl -e "$allanime_refr" -s -H "Content-Type: application/json" -X POST "${allanime_api}/api" --data "{\"variables\":{\"showId\":\"$id\",\"translationType\":\"$mode\",\"episodeString\":\"$ep_no\"},\"query\":\"$episode_embed_gql\"}" -A "$agent")"
     fi
 
-    resp="$(process_response "$api_resp" | tr '{}' '\n' | sed 's|\\u002F|\/|g;s|\\||g' | sed -nE 's|.*"name":"([^"]*)".*"url":"([^"]*)".*|\1 :\2|p;s|.*"sourceName":"([^"]*)".*"sourceUrl":"([^"]*)".*|\1 :\2|p')"
+    resp="$(process_response "$api_resp" | sed 's|\\u002F|\/|g;s|\\||g' | sed -nE 's|.*"name":"([^"]*)".*"url":"([^"]*)".*|\1 :\2|p;s|.*"sourceName":"([^"]*)".*"sourceUrl":"([^"]*)".*|\1 :\2|p')"
     # generate links into sequential files
     cache_dir="$(mktemp -d)"
     providers="1 2 3 4"

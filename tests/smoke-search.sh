@@ -51,7 +51,7 @@ if [ -z "$api_resp" ] || ! printf '%s' "$api_resp" | grep -q tobeparsed; then
 fi
 [ -z "$api_resp" ] && fail "episode endpoint returned empty"
 
-resp="$(process_response "$api_resp" | tr '{}' '\n' | sed 's|\\u002F|/|g;s|\\||g' | sed -nE 's|.*"name":"([^"]*)".*"url":"([^"]*)".*|\1 :\2|p;s|.*"sourceName":"([^"]*)".*"sourceUrl":"([^"]*)".*|\1 :\2|p')"
+resp="$(process_response "$api_resp" | sed 's|\\u002F|/|g;s|\\||g' | sed -nE 's|.*"name":"([^"]*)".*"url":"([^"]*)".*|\1 :\2|p;s|.*"sourceName":"([^"]*)".*"sourceUrl":"([^"]*)".*|\1 :\2|p')"
 [ -z "$resp" ] && fail "process_response/parsing produced no sourceUrls"
 n_sources="$(printf '%s\n' "$resp" | wc -l | tr -d ' ')"
 pass "get_episode_url: decrypted $n_sources sourceUrls"
