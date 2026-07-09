@@ -41,7 +41,7 @@ pass "episodes_list: got $ep_count episodes"
 
 # 3) get_episode_url decryption: just exercise the API + process_response + sed pipeline
 ep_no="$(printf '%s' "$ep_list" | head -n1)"
-episode_embed_gql='query ($showId: String!, $translationType: VaildTranslationTypeEnumType!, $episodeString: String!) { episode( showId: $showId translationType: $translationType episodeString: $episodeString ) { episodeString sourceUrls }}'
+episode_embed_gql='query ($showId: String!, $translationType: VaildTranslationTypeEnumType!, $episodeString: String!) { episode( showId: $showId translationType: $translationType episodeString: $episodeString ) { episodeString sourceUrls { url name } }}'
 query_hash="d405d0edd690624b66baba3068e0edc3ac90f1597d898a1ec8db4e5c43c00fec"
 query_vars="{\"showId\":\"$id\",\"translationType\":\"$mode\",\"episodeString\":\"$ep_no\"}"
 query_ext="{\"persistedQuery\":{\"version\":1,\"sha256Hash\":\"$query_hash\"}}"
@@ -51,7 +51,7 @@ if [ -z "$api_resp" ] || ! printf '%s' "$api_resp" | grep -q tobeparsed; then
 fi
 [ -z "$api_resp" ] && fail "episode endpoint returned empty"
 
-resp="$(process_response "$api_resp" | tr '{}' '\n' | sed 's|\\u002F|/|g;s|\\||g' | sed -nE 's|.*sourceUrl":"([^"]*)".*sourceName":"([^"]*)".*|\2 :\1|p')"
+resp="$(process_response "$api_resp" | tr '{}' '\n' | sed 's|\\u002F|/|g;s|\\||g' | sed -nE 's|.*"name":"([^"]*)".*"url":"([^"]*)".*|\1 :\2|p;s|.*"sourceName":"([^"]*)".*"sourceUrl":"([^"]*)".*|\1 :\2|p')"
 [ -z "$resp" ] && fail "process_response/parsing produced no sourceUrls"
 n_sources="$(printf '%s\n' "$resp" | wc -l | tr -d ' ')"
 pass "get_episode_url: decrypted $n_sources sourceUrls"
